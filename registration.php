@@ -88,14 +88,15 @@ if (isset($_SESSION["user"])) {
                 <?php endif; ?>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" oninput="checkPasswordStrength(this.value)" onclick="setPassword(this, 'showPasswordCheckbox')" value="<?php echo $_SESSION['old_data']['password'] ?? '' ?>">
+                <input type="password" class="form-control" name="password" placeholder="Password" oninput="checkPasswordStrength(this.value,'password')" onclick="setPassword(this, 'showPasswordCheckbox')" value="<?php echo $_SESSION['old_data']['password'] ?? '' ?>">
                 <?php if (isset($_SESSION['errors']['password'])) :  ?>
                     <p class="alert alert-danger"><?php echo $_SESSION['errors']['password'] ?></p>
                 <?php endif; ?>
-                <p id="password-strength" style="margin-top: 5px;"></p>
+                <p id="password" class="password-strength" style="margin-top: 5px;"></p>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirm Password" onclick="setPassword(this, 'showPasswordCheckbox')" value="<?php echo $_SESSION['old_data']['confirm_password'] ?? '' ?>">
+                <input type="password" class="form-control"  name="confirm_password" placeholder="Confirm Password" oninput="checkPasswordStrength(this.value,'confirm_password')" onclick="setPassword(this, 'showPasswordCheckbox')" value="<?php echo $_SESSION['old_data']['confirm_password'] ?? '' ?>">
+                <p id="confirm_password" class="password-strength" style="margin-top: 5px;"></p>
             </div>
             <div class="form-group">
                 <label>

@@ -74,7 +74,7 @@ function setPassword(inputField, showPasswordCheckboxId) {
   }
 }
 
-function checkPasswordStrength(password) {
+function checkPasswordStrength(password,id) {
     if (password.trim() === "") {
         document.getElementById('password-strength').textContent = '';
         return;
@@ -130,6 +130,6 @@ function checkPasswordStrength(password) {
       feedback = "";
   }
 
-  document.getElementById("password-strength").textContent = feedback;
-  document.getElementById("password-strength").style.color = color;
+  document.getElementById(id).textContent = feedback;
+  document.getElementById(id).style.color = color;
 }
