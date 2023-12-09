@@ -16,7 +16,7 @@ if (!isset($_SESSION["user"])) {
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to dipesh dashboard</h1>
+        <h1>Welcome to dashboard</h1>
         <a href="logout.php" class="btn btn-danger">Logout</a>
     </div>
 </body>

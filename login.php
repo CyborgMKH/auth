@@ -23,9 +23,10 @@ if (isset($_SESSION["user"])) {
         <?php
         if (isset($_POST["login"])) {
            $email = $_POST["email"];
+           $username = $_POST["username"];
            $password = $_POST["password"];
             require_once "database.php";
-            $sql = "SELECT * FROM users WHERE email = '$email'";
+            $sql = "SELECT * FROM users WHERE email = '$email' or username = '$username'";
             $result = mysqli_query($conn, $sql);
             $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
             if ($user) {
@@ -35,16 +36,16 @@ if (isset($_SESSION["user"])) {
                     header("Location: index.php");
                     die();
                 }else{
-                    echo "<div class='alert alert-danger'>Invalid Email or Password</div>";
+                    echo "<div class='alert alert-danger'>Invalid Email, Username, or Password</div>";
                 }
             }else{
-                echo "<div class='alert alert-danger'>Invalid Email or Password</div>";
+                echo "<div class='alert alert-danger'>Invalid Email, Username, or Password</div>";
             }
         }
         ?>
       <form action="login.php" method="post">
         <div class="form-group">
-            <input type="email" placeholder="Enter Email" name="email" class="form-control" <?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?> required>
+            <input type="text" placeholder="Enter Email OR Username" name="email" class="form-control" <?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?> required>
         </div>
         <div class="form-group">
             <input type="password" placeholder="Enter Password" id="password" name="password" class="form-control" <?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password']) : ''; ?> required>
