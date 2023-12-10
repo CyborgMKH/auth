@@ -51,11 +51,12 @@ if (isset($_SESSION["user"])) {
             $rowCount = mysqli_num_rows($result);
             $rowCountusername = mysqli_num_rows($result2);
 
+            //server side form validations
             if (empty($username)) {
                 $_SESSION['errors']['username'] = 'Username is required';
             } else if (empty($email)) {
                 $_SESSION['errors']['email'] = 'Email is required';
-            }else if ($rowCountusername > 0) {
+            } else if ($rowCountusername > 0) {
                 $_SESSION['errors']['username'] = 'The username is taken';
             } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $_SESSION['errors']['email'] = 'Email is invalid';
@@ -79,6 +80,7 @@ if (isset($_SESSION["user"])) {
             }
         }
         ?>
+        <!-- user registration form -->
         <form action="registration.php" method="post">
             <div class="form-group">
                 <input required type="text" class="form-control" name="username" placeholder="Username" value="<?php echo $_SESSION['old_data']['username'] ?? '' ?>">
@@ -86,12 +88,14 @@ if (isset($_SESSION["user"])) {
                     <p class="alert alert-danger"><?php echo $_SESSION['errors']['username'] ?></p>
                 <?php endif; ?>
             </div>
+
             <div class="form-group">
                 <input required type="text" class="form-control" name="email" placeholder="Email" value="<?php echo $_SESSION['old_data']['email'] ?? '' ?>">
                 <?php if (isset($_SESSION['errors']['email'])) :  ?>
                     <p class="alert alert-danger"><?php echo $_SESSION['errors']['email'] ?></p>
                 <?php endif; ?>
             </div>
+
             <div class="form-group">
                 <input required type="password" class="form-control" name="password" placeholder="Password" oninput="checkPasswordStrength(this.value,'password')" value="<?php echo $_SESSION['old_data']['password'] ?? '' ?>" id="Showpassword">
                 <?php if (isset($_SESSION['errors']['password'])) :  ?>
@@ -99,10 +103,12 @@ if (isset($_SESSION["user"])) {
                 <?php endif; ?>
                 <p id="password" class="password-strength" style="margin-top: 5px;"></p>
             </div>
+
             <div class="form-group">
-                <input required type="password" class="form-control"  name="confirm_password" placeholder="Confirm Password" oninput="checkPasswordStrength(this.value,'confirm_password')" value="<?php echo $_SESSION['old_data']['confirm_password'] ?? '' ?>" id="Showpassword2">
+                <input required type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" oninput="checkPasswordStrength(this.value,'confirm_password')" value="<?php echo $_SESSION['old_data']['confirm_password'] ?? '' ?>" id="Showpassword2">
                 <p id="confirm_password" class="password-strength" style="margin-top: 5px;"></p>
             </div>
+            
             <div class="form-group">
                 <label>
                     <input type="checkbox" id="showPasswordCheckbox"> Show Password
@@ -153,4 +159,3 @@ if (isset($_SESSION['old_data'])) {
 }
 
 ?>
-
