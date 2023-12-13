@@ -1,12 +1,36 @@
-body{
-    padding:50px;
-}
 .container{
-    max-width: 600px;
-    margin:0 auto;
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    /* background-color: red; */
+    align-items: center;
+    justify-content: center;
+    
+}
+body{
+    background: rgb(225,28,242);
+    background: linear-gradient(90deg, rgba(225,28,242,0.8940826330532213) 0%, rgba(9,9,121,0.8688725490196079) 53%);
+}
+.sub-container{
+    width: 600px;
+    /* margin:auto; */
     padding:50px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    background-color: white ;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px -1px rgba(77, 76, 76, 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 .form-group{
     margin-bottom:30px;
+    position: relative;
+}
+.error{
+    color: red;
+    font-size: 15px;
+    position: absolute;
+}
+.password-strength{
+    position: absolute;
+    right: 0;
+    font-size: 15px;
 }
