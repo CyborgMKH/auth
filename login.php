@@ -4,6 +4,61 @@ if (isset($_SESSION["user"])) {
     header("Location: index.php");
 }
 ?>
+
+<?php
+if (isset($_POST["login"])) {
+    $emailOrUsername = $_POST["email_or_username"];
+    $password = $_POST["password"];
+    $data = $_POST;
+
+    require_once "database.php";
+
+    // Check if the entered value is a valid email address
+    if (filter_var($emailOrUsername, FILTER_VALIDATE_EMAIL)) {
+        $sql = "SELECT * FROM users WHERE email = ?";
+    } else {
+        // If not a valid email, treat it as a username
+        $sql = "SELECT * FROM users WHERE username = ?";
+    }
+
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $emailOrUsername);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
+
+    // Server-side form validations
+    // empty username or email
+    //Invalid Email or Username
+    if (empty($emailOrUsername)) {
+        $_SESSION['error']['email_or_username'] = 'Username or Email is required';
+    } else if (!$user) {
+        $_SESSION['error']['email_or_username'] = 'Invalid Email or Username';
+    }
+
+    if (empty($password)) {
+        $_SESSION['error']['password'] = 'Password is required';
+    }
+
+    if ($user && !password_verify($password, $user["password"])) {
+        $_SESSION['error']['password'] = 'Invalid Password';
+    }
+    
+    $_SESSION['old_data'] = $data;
+
+    if (!isset($_SESSION['error'])) {
+        // Successful login
+        $_SESSION["user"] = "yes";
+        header("Location: index.php");
+        die();
+    } else {
+        // Redirect to the login page with errors
+        header("Location: login.php");
+        die();
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +71,7 @@ if (isset($_SESSION["user"])) {
     <link rel="stylesheet" href="style.css">
     <script>
         // Check if the success message is set in the session
-        <?php if (isset($_SESSION['success_message'])): ?>
+        <?php if (isset($_SESSION['success_message'])) : ?>
             // Display the success message using JavaScript alert
             alert("<?php echo $_SESSION['success_message']; ?>");
             // Remove the success message from the session
@@ -27,68 +82,38 @@ if (isset($_SESSION["user"])) {
 
 <body>
 
-   <div class="container">
-       <div class="sub-container">
-           <?php
-           if (isset($_POST["login"])) {
-               $emailOrUsername = $_POST["email_or_username"];
-               $password = $_POST["password"];
-           
-               require_once "database.php";
-           
-               // Check if the entered value is a valid email address
-               if (filter_var($emailOrUsername, FILTER_VALIDATE_EMAIL)) {
-                   $sql = "SELECT * FROM users WHERE email = ?";
-               } else {
-                   // If not a valid email, treat it as a username
-                   $sql = "SELECT * FROM users WHERE username = ?";
-               }
-           
-               $stmt = mysqli_prepare($conn, $sql);
-               mysqli_stmt_bind_param($stmt, "s", $emailOrUsername);
-               mysqli_stmt_execute($stmt);
-           
-               $result = mysqli_stmt_get_result($stmt);
-               $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
-           
-               if ($user) {
-                   if (password_verify($password, $user["password"])) {
-                       session_start();
-                       $_SESSION["user"] = "yes";
-                       header("Location: index.php");
-                       die();
-                   } else {
-                       echo "<div class='alert alert-danger'>Invalid Email, Username, or Password</div>";
-                   }
-               } else {
-                   echo "<div class='alert alert-danger'>Invalid Email, Username, or Password</div>";
-               }
-           }
-           
-           ?>
-           <h2 style="margin-bottom: 10px; text-align:center; font-size:30px;">Login</h2>
-           <form action="login.php" method="post">
-               <div class="form-group">
-                   <input type="text" placeholder="Enter Email OR Username" name="email_or_username" class="form-control" <?php echo isset($_POST['email_or_username']) ? htmlspecialchars($_POST['email_or_username']) : ''; ?> required>
-               </div>
-   
-               <div class="form-group">
-                   <input type="password" placeholder="Enter Password" id="password" name="password" class="form-control" <?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password']) : ''; ?> required>
-               </div>
-               <div class="form-group">
-                   <label>
-                       <input type="checkbox" id="showPasswordCheckbox"> Show Password
-                   </label>
-               </div>
-               <div class="form-btn">
-                   <input type="submit" value="Login" name="login" class="btn btn-primary">
-               </div>
-           </form>
-           <div>
-               <p>Not registered yet <a href="registration.php">Register Here</a></p>
-           </div>
-       </div>
-   </div>
+    <div class="container">
+        <div class="sub-container">
+
+            <h2 style="margin-bottom: 10px; text-align:center; font-size:30px;">Login</h2>
+            <form action="login.php" method="post">
+                <div class="form-group">
+                    <input type="text" placeholder="Enter Email OR Username" name="email_or_username" class="form-control" <?php echo isset($_POST['email_or_username']) ? htmlspecialchars($_POST['email_or_username']) : ''; ?> value="<?php echo $_SESSION['old_data']['email_or_username'] ?? '' ?>" required>
+                    <?php if (isset($_SESSION['error']['email_or_username'])) :  ?>
+                        <span class="error">*<?php echo $_SESSION['error']['email_or_username'] ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" placeholder="Enter Password" id="password" name="password" class="form-control" <?php echo isset($_POST['password']) ? htmlspecialchars($_POST['password']) : ''; ?> value="<?php echo $_SESSION['old_data']['password'] ?? '' ?>" required>
+                    <?php if (isset($_SESSION['error']['password'])) :  ?>
+                        <span class="error">*<?php echo $_SESSION['error']['password'] ?></span>
+                    <?php endif; ?>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="showPasswordCheckbox"> Show Password
+                    </label>
+                </div>
+                <div class="form-btn">
+                    <input type="submit" value="Login" name="login" class="btn btn-primary">
+                </div>
+            </form>
+            <div>
+                <p>Not registered yet <a href="registration.php">Register Here</a></p>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -103,4 +128,12 @@ if (isset($_SESSION["user"])) {
 </body>
 
 </html>
+
 <?php
+if (isset($_SESSION['error'])) {
+    unset($_SESSION['error']);
+}
+if (isset($_SESSION['old_data'])) {
+    unset($_SESSION['old_data']);
+}
+?>

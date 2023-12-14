@@ -4,8 +4,8 @@ function checkPasswordStrength(password,id) {
         return;
       }
 
-  // Define your password strength criteria
-  // For example, you can check length, presence of uppercase/lowercase letters, numbers, and special characters
+  // Defining password strength criteria
+  // For example, we can check length, presence of uppercase/lowercase letters, numbers, and special characters
   let strength = 0;
 
   if (password.length >= 8) {
