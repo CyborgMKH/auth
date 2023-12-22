@@ -44,7 +44,7 @@ if (isset($_POST["login"])) {
     if ($user && !password_verify($password, $user["password"])) {
         $_SESSION['error']['password'] = 'Invalid Password';
     }
-    
+
     $_SESSION['old_data'] = $data;
 
     if (!isset($_SESSION['error'])) {
@@ -115,20 +115,22 @@ if (isset($_POST["login"])) {
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
-            const passwordInput = document.getElementById('password');
 
-            showPasswordCheckbox.addEventListener('change', function() {
-                passwordInput.type = showPasswordCheckbox.checked ? 'text' : 'password';
-            });
-        });
-    </script>
 </body>
 
 </html>
 
+<script>
+    //Js for show entered password
+    document.addEventListener('DOMContentLoaded', function() {
+        const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+        const passwordInput = document.getElementById('password');
+
+        showPasswordCheckbox.addEventListener('change', function() {
+            passwordInput.type = showPasswordCheckbox.checked ? 'text' : 'password';
+        });
+    });
+</script>
 <?php
 if (isset($_SESSION['error'])) {
     unset($_SESSION['error']);
