@@ -5,6 +5,7 @@ if (isset($_SESSION["user"])) {
 }
 ?>
 <?php include "database.php" ?>
+<?php include "sendmail.php" ?>
 <?php
 if (isset($_POST["submit"])) {
     $data = $_POST;
@@ -12,6 +13,7 @@ if (isset($_POST["submit"])) {
     $email = $_POST["email"];
     $password = $_POST["password"];
     $confirmPassword = $_POST["confirm_password"];
+    $v_code=bin2hex(random_bytes(6));
 
     //using regex and regular expression for checking password strength and stop user registring with weak password
     $passwordCheckRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$^";
@@ -58,17 +60,32 @@ if (isset($_POST["submit"])) {
     }
 
     if (!isset($_SESSION['errors'])) {
-        $qry = "insert into users values('','" . $username . "','" . $email . "','" . $passwordHash . "')";
-        $conn->query($qry);
-        $conn->close();
-        // Set success message in session
-        $_SESSION['success_message'] = "User Registration successfuly!";
-
-        //redirect to the login page when the registration is success
-        header('location:login.php');
+        $qry = "insert into users (username,email,password) values('" . $username . "','" . $email . "','" . $passwordHash . "')";
+        if($conn->query($qry) ===true && sendMail($email,$v_code) )
+        {
+            $_SESSION['vcode']['value']=$v_code;
+            $_SESSION['vcode']['created_at']=time();
+            $_SESSION['email']=$email;
+            $conn->close();
+            // Set success message in session
+            $_SESSION['success_message'] = "User Registration successfuly!";
+            //redirect to the login page when the registration is success
+            $_SESSION['access_verification']=true;
+            header('location:verification.php');
+        }
     } else {
         $_SESSION['old_data'] = $data;
     }
+}
+
+if(isset($_GET['change_email']))
+{
+    $email=$_GET['change_email'];
+    include "database.php";
+    $qry="select id,username,email from users where email='".$email."'";
+    $result=$conn->query($qry);
+    $data=$result->fetch_assoc();
+    $_SESSION['old_data'] = $data;
 }
 ?>
 <!-- user registration form -->

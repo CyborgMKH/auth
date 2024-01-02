@@ -13,6 +13,15 @@ if (!isset($_SESSION["user"])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
     <title>User Dashboard</title>
+    <script>
+        // Check if the success message is set in the session
+        <?php if (isset($_SESSION['is_verified']) &&$_SESSION['is_verified']==true) : ?>
+            // Display the success message using JavaScript alert
+            alert("verified successfully");
+            // Remove the success message from the session
+            <?php unset($_SESSION['is_verified']); ?>
+        <?php endif; ?>
+    </script>
 </head>
 <body>
     <div class="container">

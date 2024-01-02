@@ -44,6 +44,23 @@ if (isset($_POST["login"])) {
     if ($user && !password_verify($password, $user["password"])) {
         $_SESSION['error']['password'] = 'Invalid Password';
     }
+    // die($user["is_verified"]);
+
+    if(!$user["is_verified"])
+    {
+        include "sendmail.php";
+        $v_code=bin2hex(random_bytes(6));
+        $email=$user['email'];
+        if(sendMail($email,$v_code))
+        {
+            $_SESSION['email']=$email;
+            $_SESSION['vcode']['value']=$v_code;
+            $_SESSION['vcode']['created_at']=time();
+            $_SESSION['access_verification']=true;
+            header('location:verification.php');
+            exit();
+        }
+    }
 
     $_SESSION['old_data'] = $data;
 
@@ -71,13 +88,14 @@ if (isset($_POST["login"])) {
     <link rel="stylesheet" href="style.css">
     <script>
         // Check if the success message is set in the session
-        <?php if (isset($_SESSION['success_message'])) : ?>
+        <?php if (isset($_SESSION['passwordReset']) &&$_SESSION['passwordReset']==true) : ?>
             // Display the success message using JavaScript alert
-            alert("<?php echo $_SESSION['success_message']; ?>");
+            alert("Password Reset successfully! check your email");
             // Remove the success message from the session
-            <?php unset($_SESSION['success_message']); ?>
+            <?php unset($_SESSION['passwordReset']); ?>
         <?php endif; ?>
     </script>
+  
 </head>
 
 <body>
@@ -111,6 +129,9 @@ if (isset($_POST["login"])) {
             </form>
             <div>
                 <p>Not registered yet <a href="registration.php">Register Here</a></p>
+            </div>
+            <div>
+                <a href="forgotpassword.php">Forgot Password ?</a>
             </div>
         </div>
     </div>
